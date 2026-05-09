@@ -41,17 +41,19 @@ jobs:
           -p:SatelliteResourceLanguages=en
           -o ./publish
 
-      # 兜底删除任何可能残留的 .pdb（正常情况下已不再生成）
       - name: Ensure no pdb remains
         shell: bash
         run: rm -f ./publish/*.pdb
 
-      - name: Generate changelog
-        uses: orhun/git-cliff-action@v3
+      # 安装 git-cliff（跨平台，不依赖 Docker）
+      - name: Install git-cliff
+        uses: taiki-e/install-action@v2
         with:
-          args: --tag ${{ github.ref_name }} --output CHANGELOG.md
-        env:
-          OUTPUT: CHANGELOG.md
+          tool: git-cliff
+
+      # 生成 changelog
+      - name: Generate changelog
+        run: git cliff --tag ${{ github.ref_name }} --output CHANGELOG.md
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
