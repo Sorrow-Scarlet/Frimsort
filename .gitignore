@@ -1,0 +1,14 @@
+# .NET
+obj
+bin
+.fake
+
+# IDE
+/.vs
+/.vscode
+/.idea
+
+# MACOS
+.DS_Store
+
+./publish

@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IsTrimmable>true</IsTrimmable>
+    <PublishAot>true</PublishAot>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Types.fs" />
+    <Compile Include="Dependencies.fs" />
+    <Compile Include="TopoSort.fs" />
+    <Compile Include="AlphabeticalSort.fs" />
+    <Compile Include="Sorter.fs" />
+    <Compile Include="ModScanner.fs" />
+    <Compile Include="ModsConfigXml.fs" />
+    <Compile Include="CommunityRules.fs" />
+  </ItemGroup>
+
+</Project>

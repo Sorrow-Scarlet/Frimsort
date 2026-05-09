@@ -1,0 +1,63 @@
+name: Release Native AOT
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Verify tag is on main branch
+        shell: bash
+        run: |
+          git branch -r --contains ${{ github.sha }} | grep -E '^\s*origin/main$' || {
+            echo "::error::Tag not on main branch, aborting."
+            exit 1
+          }
+
+      - name: Publish Native AOT (single exe, no pdb, only en resources)
+        run: >
+          dotnet publish src/Frimsort.Cli/Frimsort.Cli.fsproj
+          -c Release
+          -r win-x64
+          -p:PublishAot=true
+          -p:PublishSingleFile=true
+          --self-contained true
+          -p:DebugSymbols=false
+          -p:DebugType=none
+          -p:SatelliteResourceLanguages=en
+          -o ./publish
+
+      # 兜底删除任何可能残留的 .pdb（正常情况下已不再生成）
+      - name: Ensure no pdb remains
+        shell: bash
+        run: rm -f ./publish/*.pdb
+
+      - name: Generate changelog
+        uses: orhun/git-cliff-action@v3
+        with:
+          args: --tag ${{ github.ref_name }} --output CHANGELOG.md
+        env:
+          OUTPUT: CHANGELOG.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          body_path: CHANGELOG.md
+          files: ./publish/Frimsort.Cli.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

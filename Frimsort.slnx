@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="src/Frimsort.Cli/Frimsort.Cli.fsproj" />
+  <Project Path="src/Frimsort.Core/Frimsort.Core.fsproj" />
+  <Project Path="src/Frimsort.Tests/Frimsort.Tests.fsproj" />
+</Solution>
